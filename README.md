@@ -40,6 +40,10 @@ cargo run -- <path_to_markdown> <path_to_stylesheet>
 ```
 
 ![markdown_content](assets/markdown_content.png)
+
+![code_block](assets/code_block.png)
+![rendered_code_block](assets/rendered_code_block.png)
+
 ![rendered_html](assets/rendered_html.png)
 
 
