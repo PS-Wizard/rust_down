@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+</head>
+<body>
+    <h1> Heading 1: </h1><h2> Heading 2</h2><h3> Heading 3</h3><h4> Heading 4</h4><h5> Heading 5</h5><h6> Heading 6</h6><p>Below is an underline:</p><hr><blockquote class='blockquote-1'> Blockquote Level 1: Info</blockquote><blockquote class='blockquote-2'> Blockquote Level 2: Danger</blockquote><blockquote class='blockquote-3'> Blockquote Level 3:  Hint</blockquote><p>Wassupppp testing inline stuff: <mark>here's highlight</mark>, <strong>here's bold</strong>, <em>here's italic</em>. </p><h4> Below is an image:</h4><img src="./wallpaper.jpg" alt='some alt text' /><h4> Below is a mutli-line codeblock with syntax highlighting:</h4><pre><code class='language-rust'>use std::iter::Peekable;
+
+use super::ast::Node;
+
+pub fn parse_inline_code(line: &str) -> Option<Node> {
+    if line.trim().starts_with("`") && line.trim().ends_with("`") {
+        return Some(Node::Code {
+            language: "inline".to_string(),
+            content: vec![Node::Text(line[2..line.len() - 1].to_string())],
+        });
+    }
+
+    None
+}
+
+pub fn parse_multiline_code<I>(lines: &mut Peekable<I>) -> Option<Node>
+where
+    I: Iterator<Item = std::io::Result<String>>,
+{
+    // Grab the first line (which should be the ```<lang>)
+    let first_line = lines.next()?.ok()?;
+    if !first_line.trim().starts_with("```") {
+        return None;
+    }
+
+    let lang = first_line.trim().trim_start_matches("```").to_string();
+    let mut content = vec![];
+
+    // keep consuming lines until we hit closing ```
+    while let Some(Ok(peek_line)) = lines.peek() {
+        if peek_line.trim().starts_with("```") {
+            lines.next(); // consume the closing ```
+            break;
+        }
+
+        let line = lines.next().unwrap().unwrap();
+        content.push(Node::Text(line));
+    }
+
+    Some(Node::Code {
+        language: if lang.is_empty() {
+            "unknown".to_string()
+        } else {
+            lang
+        },
+        content,
+    })
+}
+</code>
+</pre><h4> Below is a custom take on generating tables:</h4><pre><code class='language-unknown'>// Made With the following syntax:
+
+:::table
+heading1, heading2
+value1, value2
+value3, value4
+:::
+
+</code>
+</pre><table><thead><tr><th>heading1</th><th>heading2</th></tr></thead><tbody><tr><td>value1</td><td>value2</td></tr><tr><td>value3</td><td>value4</td></tr></tbody></table>
+</body>
+</html>
